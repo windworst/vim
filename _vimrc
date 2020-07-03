@@ -125,7 +125,7 @@ let g:extends_manager_file = expand($HOME."/.vim/autoload/plug.vim")
 
 func! ExtendsLoad()
   if filereadable(g:extends_manager_file)
-    call OnInit()
+    call OnInit(0)
   end
 endf
 
@@ -133,15 +133,16 @@ func! ExtendsInstall()
   if !filereadable(g:extends_manager_file)
     :execute "!curl -fLo ".g:extends_manager_file." --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
   end
-  :PlugUpdate
-  call ExtendsLoad()
+  if filereadable(g:extends_manager_file)
+    call OnInit(1)
+  end
 endf
 
 :map <silent> <C-L> :call ExtendsLoad()<CR>
 :map <silent> <C-I> :call ExtendsInstall()<CR>
 
 " Plugins And Configs Write Here
-func! OnInit()
+func! OnInit(needUpdate)
   call plug#begin($HOME.'/.vim/plugged')
 
   Plug 'rakr/vim-one'
@@ -155,6 +156,10 @@ func! OnInit()
   Plug 'tpope/vim-fugitive'
 
   call plug#end()
+
+  if a:needUpdate
+    :PlugUpdate
+  end
 
   colorscheme one
 

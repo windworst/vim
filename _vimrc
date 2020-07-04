@@ -51,7 +51,7 @@ end
 
 set background=light
 if has("gui_running")
-  colorscheme morning
+  colorscheme zellner
 else
   colorscheme elflord
 end

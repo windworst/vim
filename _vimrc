@@ -156,8 +156,6 @@ func! OnInit(needUpdate)
 
   colorscheme one
 
-  map <silent> <S-F> :FixWhitespace<CR>
-
   map <silent> <F5> :NERDTreeToggle<CR>
   map! <silent> <F5> <ESC><F5><CR>
 

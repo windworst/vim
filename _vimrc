@@ -121,25 +121,18 @@ map <silent> <F11> :call ToggleMenu()<CR>
 
 " <Extends>
 
-let g:extends_manager_file = expand($HOME."/.vim/autoload/plug.vim")
-
-func! ExtendsLoad()
-  if filereadable(g:extends_manager_file)
-    call OnInit(0)
+func! ExtendsLoad(needUpdate)
+  let extends_manager_file = expand($HOME."/.vim/autoload/plug.vim")
+  if a:needUpdate && !filereadable(extends_manager_file)
+    :execute "!curl -fLo ".extends_manager_file." --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+  end
+  if filereadable(extends_manager_file)
+    call OnInit(a:needUpdate)
   end
 endf
 
-func! ExtendsInstall()
-  if !filereadable(g:extends_manager_file)
-    :execute "!curl -fLo ".g:extends_manager_file." --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
-  end
-  if filereadable(g:extends_manager_file)
-    call OnInit(1)
-  end
-endf
-
-:map <silent> <C-L> :call ExtendsLoad()<CR>
-:map <silent> <C-I> :call ExtendsInstall()<CR>
+:map <silent> <C-L> :call ExtendsLoad(0)<CR>
+:map <silent> <C-I> :call ExtendsLoad(1)<CR>
 
 " Plugins And Configs Write Here
 func! OnInit(needUpdate)
@@ -175,4 +168,4 @@ func! OnInit(needUpdate)
 endf
 
 " Load Extends Vim package on init
-call ExtendsLoad()
+call ExtendsLoad(0)

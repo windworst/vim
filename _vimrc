@@ -53,7 +53,7 @@ let g:isGUI = has("gui_running")
 if g:isGUI
   colorscheme zellner
 else
-  colorscheme elflord
+  colorscheme morning
 end
 
 let g:vim_cfg_dir = expand($HOME.'/.vim/')
@@ -163,11 +163,7 @@ func! OnInit(needUpdate)
     :PlugUpdate
   end
 
-  if g:isGUI
-    set background=light
-  else
-    set background=dark
-  end
+  set background=light
   colorscheme one
 
   map <silent> <F5> :NERDTreeToggle<CR>

@@ -41,7 +41,7 @@ source $VIMRUNTIME/menu.vim
 
 language messages zh_CN.utf-8
 
-" <Font && Theme && Color>
+" <Config>
 
 if has("gui_win32")
   set guifont=Consolas:h10
@@ -49,11 +49,16 @@ elseif has("gui_gtk2")
   set guifont=DejaVu\ Sans\ Mono\ 11
 end
 
-set background=light
-if has("gui_running")
+let g:isGUI = has("gui_running")
+if g:isGUI
   colorscheme zellner
 else
   colorscheme elflord
+end
+
+let g:vim_cfg_dir = expand($HOME.'/.vim/')
+if has('nvim')
+  let g:vim_cfg_dir = expand($HOME.'/.config/nvim/')
 end
 
 " <Key Mapping>
@@ -101,6 +106,9 @@ map! <silent> <C-F12> <ESC><C-F12>
 map <silent> <leader>ec <F12><CR>
 map <silent> <leader>lc <C-F12><CR>
 
+map <silent> <leader>w :w!<CR>
+map! <silent> <leader>w :w!<CR>
+
 " <Show/Hide Menu Toolbar RollLink>
 
 func! HideMenu()
@@ -124,7 +132,7 @@ map <silent> <F11> :call ToggleMenu()<CR>
 " <Extends>
 
 func! ExtendsLoad(needUpdate)
-  let extends_manager_file = expand($HOME."/.vim/autoload/plug.vim")
+  let extends_manager_file = expand(g:vim_cfg_dir.'autoload/plug.vim')
   if a:needUpdate && !filereadable(extends_manager_file)
     :execute "!curl -fLo ".extends_manager_file." --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
   end
@@ -133,18 +141,17 @@ func! ExtendsLoad(needUpdate)
   end
 endf
 
-map <silent> <C-L> :call ExtendsLoad(0)<CR>
-map <silent> <C-I> :call ExtendsLoad(1)<CR>
+map <silent> <leader>lo :call ExtendsLoad(0)<CR>
+map <silent> <leader>lu :call ExtendsLoad(1)<CR>
 
 " Plugins And Configs Write Here
 func! OnInit(needUpdate)
-  call plug#begin($HOME.'/.vim/plugged')
+  call plug#begin(g:vim_cfg_dir.'plugged')
 
   Plug 'rakr/vim-one'
   Plug 'preservim/nerdcommenter'
   Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
   Plug 'Yggdroot/indentLine'
-  Plug 'Yggdroot/LeaderF'
   Plug 'bronson/vim-trailing-whitespace'
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
@@ -156,43 +163,16 @@ func! OnInit(needUpdate)
     :PlugUpdate
   end
 
+  if g:isGUI
+    set background=light
+  else
+    set background=dark
+  end
   colorscheme one
 
   map <silent> <F5> :NERDTreeToggle<CR>
   map! <silent> <F5> <ESC><F5><CR>
   map <silent> <leader>tr <F5><CR>
-
-  " don't show the help in normal mode
-  let g:Lf_HideHelp = 1
-  let g:Lf_UseCache = 0
-  let g:Lf_UseVersionControlTool = 0
-  let g:Lf_IgnoreCurrentBufferName = 1
-  " popup mode
-  let g:Lf_WindowPosition = 'popup'
-  let g:Lf_PreviewInPopup = 1
-  let g:Lf_StlSeparator = { 'left': "\ue0b0", 'right': "\ue0b2", 'font': "DejaVu Sans Mono for Powerline" }
-  let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 0 }
-
-  let g:Lf_ShortcutF = "<leader>ff"
-  noremap <leader>fb :<C-U><C-R>=printf("Leaderf buffer %s", "")<CR><CR>
-  noremap <leader>fm :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
-  noremap <leader>ft :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
-  noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
-
-  noremap <leader>fc :<C-U><C-R>=printf("Leaderf! rg --current-buffer -e %s ", expand("<cword>"))<CR>
-  noremap <leader>fe :<C-U><C-R>=printf("Leaderf! rg -e %s ", expand("<cword>"))<CR>
-  " search visually selected text literally
-  xnoremap gf :<C-U><C-R>=printf("Leaderf! rg -F -e %s ", leaderf#Rg#visual())<CR>
-  noremap go :<C-U>Leaderf! rg --recall<CR>
-
-  " should use `Leaderf gtags --update` first
-  let g:Lf_GtagsAutoGenerate = 0
-  let g:Lf_Gtagslabel = 'native-pygments'
-  noremap <leader>fr :<C-U><C-R>=printf("Leaderf! gtags -r %s --auto-jump", expand("<cword>"))<CR><CR>
-  noremap <leader>fd :<C-U><C-R>=printf("Leaderf! gtags -d %s --auto-jump", expand("<cword>"))<CR><CR>
-  noremap <leader>fo :<C-U><C-R>=printf("Leaderf! gtags --recall %s", "")<CR><CR>
-  noremap <leader>fn :<C-U><C-R>=printf("Leaderf gtags --next %s", "")<CR><CR>
-  noremap <leader>fp :<C-U><C-R>=printf("Leaderf gtags --previous %s", "")<CR><CR>
 endf
 
 " Load Extends Vim package on init

@@ -131,14 +131,19 @@ map <silent> <F11> :call ToggleMenu()<CR>
 
 " <Extends>
 
+let g:plugged_path = expand(g:vim_cfg_dir.'plugged')
 func! ExtendsLoad(needUpdate)
-  let $extends_manager_file = expand(g:vim_cfg_dir.'autoload/plug.vim')
+  let extends_manager = expand(g:plugged_path.'/vim-plug')
+  let $extends_manager_file = extends_manager.'/plug.vim'
   if a:needUpdate && !filereadable($extends_manager_file)
-    :execute "!curl -fLo ".$extends_manager_file." --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+    :execute "!git clone --depth=1 https://github.com/junegunn/vim-plug ".extends_manager
   end
   if filereadable($extends_manager_file)
     source $extends_manager_file
-    call OnInit(a:needUpdate)
+    try
+      call OnInit(a:needUpdate)
+    catch
+    endtry
   end
 endf
 
@@ -147,7 +152,9 @@ map <silent> <leader>lu :call ExtendsLoad(1)<CR>
 
 " Plugins And Configs Write Here
 func! OnInit(needUpdate)
-  call plug#begin(g:vim_cfg_dir.'plugged')
+  call plug#begin(g:plugged_path)
+
+  Plug 'junegunn/vim-plug'
 
   Plug 'rakr/vim-one'
   Plug 'preservim/nerdcommenter'

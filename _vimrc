@@ -132,11 +132,12 @@ map <silent> <F11> :call ToggleMenu()<CR>
 " <Extends>
 
 func! ExtendsLoad(needUpdate)
-  let extends_manager_file = expand(g:vim_cfg_dir.'autoload/plug.vim')
-  if a:needUpdate && !filereadable(extends_manager_file)
-    :execute "!curl -fLo ".extends_manager_file." --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+  let $extends_manager_file = expand(g:vim_cfg_dir.'autoload/plug.vim')
+  if a:needUpdate && !filereadable($extends_manager_file)
+    :execute "!curl -fLo ".$extends_manager_file." --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
   end
-  if filereadable(extends_manager_file)
+  if filereadable($extends_manager_file)
+    source $extends_manager_file
     call OnInit(a:needUpdate)
   end
 endf
